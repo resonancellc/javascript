@@ -1,0 +1,175 @@
+//Heavily HEAVILY tweaked matrix background from various internet sources.
+var ison;
+
+function thematrix(status)
+{
+	
+	switch (status)
+	{
+		case 'on':
+			var createcanvas = document.createElement('canvas');
+			createcanvas.id = "matrix-two";
+createcanvas.width = "100%";
+createcanvas.height = "100%";
+createcanvas.style.zIndex = 10000000000;
+createcanvas.style.top=0;
+createcanvas.style.left=0;
+createcanvas.style.position = "fixed";
+			var body = document.getElementsByTagName("body")[0];
+body.appendChild(createcanvas);
+			var canvas = document.getElementById('matrix-two');
+			console.log(canvas);
+			var ctx = canvas.getContext('2d');
+			var fontSize = 18;
+			var columns;
+			var drops; // Current position of last letter (for each column)
+			var drawnToBottom;
+			var chars=[];
+		
+			var nums = [0,0,0,0.1,0.1,0.1,0,0,0,0.1,0.1,0.1,0,0,0];
+			var cols = [1,1,1,1,1]
+			var font_size = 18;
+			var framesToSkip =5;//lower is faster animation
+			var counter = 0;
+			var iter = 0;
+			var ctx_height = window.innerHeight;
+			var ctx_width = window.innerWidth;
+			canvas.height = ctx_height;
+			canvas.width = ctx_width;
+			var chars = ["0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","人", "凡", "小", "弓", "了", "µ", "Δ", "Ω", "Π","ラ","ド","ク","リ","フ","マ","ラ","ソ","ン","わ","た","し","ワ","タ","シ","ん","ょ","ン","ョ","た","ば","こ","タ","バ","コ","と","う","き","ょ","う","ト","ウ","キ","ョ","ウ","人", "凡", "小", "弓", "了", "µ", "Δ", "Ω", "Π","ラ","ド","ク","リ","フ","マ","ラ","ソ","ン","わ","た","し","ワ","タ","シ","ん","ょ","ン","ョ","た","ば","こ","タ","バ","コ","と","う","き","ょ","う","ト","ウ","キ","ョ","ウ","ル","ビ","ン","ツ","ア","ウ","ェ","ブ","ア","ふ","べ","か","ら","ず","セ","シ","ビ","リ","テ",","," ","ど","ら"," ","ト","モ","デ","ル"," ","プ","ロ","フ","ァ","イ","ル","","と","セ","マ","ン"];
+		//  <canvas width="100%" height="100%" id="matrix-two" class="visno" style="position:fixed;top:0;left:0;"></canvas>
+		//changeClass('addClass','world','visno');
+			ison = true;
+			console.log(ison);
+			//chars=genchars();
+			
+			for (var j = 0; j < ctx_width/font_size; j++) 
+			{
+				cols.push(j);
+			}
+			initCanvas();
+			setInterval(draw, 25);
+			requestAnimationFrame(fn_draw);	
+		break;
+		case 'off':
+		//changeClass('removeClass','matrix-two','visyes');
+		//setStyle('matrix-two','z-index:-1');
+		//changeClass('removeClass','world','visno');
+		
+			ison = false;
+			console.log(ison);
+			//document.delete('matrix-two');
+			var elem = document.getElementById('matrix-two');
+			elem.parentNode.removeChild(elem);
+		break;
+	}
+
+	function genchars()
+	{	var chars=[];
+		var step = 10;
+		for (i = 0; i < 100; i++) 
+		{
+			var charCode = 0;
+			while (charCode < 60) 
+			{
+				charCode = Math.floor(Math.random() * 100);
+			}
+			chars[i]=String.fromCharCode(charCode);
+			step += 10;
+		}
+		return chars;
+	}
+		
+	function fn_draw()
+	{ 
+		if (counter < framesToSkip) {
+				counter++;
+				requestAnimationFrame(fn_draw);
+				return;
+			}  
+		iter ++;  
+		
+		for (var j = 0; j < ctx_width/font_size; j++)
+		{
+			if(!ison){
+				continue;
+			}
+			var char = chars[Math.floor(Math.random()*chars.length)]; 
+			var chance = nums[Math.floor(Math.random()*nums.length*.1)];
+			var col = cols[Math.floor(Math.random()*cols.length)];
+			
+			var alpha = Math.random()*.3;
+			var rand_y = Math.floor(Math.random()*1)+iter
+			var pos_y = (rand_y*font_size) - font_size;
+			var pos_x = (col * font_size) - font_size*2;
+			
+			ctx.font = font_size + "px Arial";
+			ctx.fillStyle = "rgba(0,255,0," + alpha + ")";
+			ctx.fillText(char,pos_x,font_size + pos_y); 
+			
+			for (var i = 0; i < ctx_height/font_size; i++)
+			{
+				ctx.fillStyle = "rgba(0,0,0," + chance +")";
+				ctx.fillRect(pos_x, (font_size*i), font_size, font_size);
+			}
+		}//end j
+		
+		
+		if (pos_y > ctx_height){
+			iter = 0;
+		}
+		
+		counter = 0;
+		cancelfndraw = requestAnimationFrame(fn_draw);
+	}
+	
+	function initCanvas() // Initialize default canvas state
+	{
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+		columns = Math.round(canvas.width / fontSize);
+		drops = [];
+
+		// Set initial position on y coordinate for each column
+		for (var i = 0; i < columns; i++) 
+		{
+			drops[i] = 1;
+		}
+		drawnToBottom = false;
+	}
+	
+	function draw() 
+	{
+		ctx.fillStyle = 'rgba(0, 0, 0, 0.05)'; // Set nearly transparent background so character trail is visible
+		ctx.fillRect(0, 0, canvas.width, canvas.height);
+		ctx.fillStyle = '#19FF19';// Set color
+		ctx.font = 'bold ' + fontSize + 'px monospace';// Set font of falling letters
+		
+		var dropCount = drops.length;
+		var charCount = chars.length;
+		
+		for (var i = 0; i < dropCount; i++) 
+		{
+		if(!ison){
+				continue;
+			}
+			var text = chars[Math.floor(Math.random() * charCount)]; // Choose a random letter
+			var rowNum = drops[i] * fontSize; // Get the y position of the letter
+			ctx.fillText(text, i * fontSize, rowNum); // Draw it!
+		
+			if (rowNum > canvas.height)
+			{
+				drawnToBottom = true; // Check if the canvas has been drawn to the bottom
+			}
+			if ((!drawnToBottom && Math.random() > 0.925) || (drawnToBottom && Math.random() > 0.95))
+			{
+				drops[i] = 0; // Randomly reset the y position of a column
+			}
+			drops[i]++;
+		}
+	}
+	window.onresize = function()
+	{
+		initCanvas();
+	}
+}
