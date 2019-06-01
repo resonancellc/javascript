@@ -1,1 +1,1 @@
-# Sample of Javascript possiblities http://www.resonanceaas.com
+# Random Sample of Vanilla Javascript usage and possiblities http://www.resonanceaas.com
